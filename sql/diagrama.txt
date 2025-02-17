@@ -1,0 +1,161 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table parking {
+  id integer [primary key]
+  name varchar (100)
+  location integer
+  spaces integer
+  unavailable integer
+  idprices integer 
+  softDelete boolean
+  created_at timestamp
+}
+
+Table userCategories{
+  id integer [primary key]
+  role varchar
+  softDelete varchar
+  created_at timestamp
+}
+
+Table user {
+  id integer [primary key]
+  name varchar(100)
+  socialNumber varcahr(15)
+  RFC varcahr(15)
+  number varcahr(15)
+  idSupervisor integer
+  idCategories ineteger
+  password varchar(100)
+  softDelete boolean
+  created_at timestamp
+}
+Table ticket {
+  id integer [primary key]
+  idParking integer
+  idLTP integer
+  active boolean
+  start date
+  finish date
+  softDelete boolean
+
+}
+Table cost{
+  id integer [primary key]
+  idTicket integer
+  lost boolean
+  extraCharge double
+  total integer
+  softDelete boolean
+}
+
+Table prices {
+  id integer [primary key]
+  hourP double
+  longTerm double
+  softDelete boolean
+
+}
+Table longTermParking {
+  id integer [primary key]
+  idcustomer integer
+  idParking integer
+  softDelete boolean
+
+}
+Table customer {
+  id integer [primary key]
+  name varchar(100)
+  idCompany integer
+  plateCar varcahr(15)
+  brand varchar(50)
+  year integer
+  color varchar(15)
+  active boolean
+  softDelete boolean
+
+}
+Table company {
+  id integer [primary key]
+  name varchar(100)
+  NumEmployes integer
+  discounts double 
+  RFC varchar(15)
+}
+
+Table expenses {
+  id integer [primary key]
+  idParking integer
+  idUser integer
+  reason integer
+  price varchar
+  autorization boolean
+  status char
+  softDelete boolean
+
+}
+Table invoices {
+  id integer [primary key]
+  dateE date
+  total double
+  idCompany integer
+  softDelete boolean
+}
+
+Table crash {
+  id integer [primary key]
+  idCutomer integer
+  idTicket integer
+  driverName varhcar(100)
+  plate varchar(10)
+  licenseDriver varchar(100)
+  details varchar(1000)
+  cost double
+  status char
+  softDelete boolean
+}
+Table workingRelationship{
+  id integer [primary key]
+  idUser integer
+  idParking integer 
+}
+Table payments {
+  id Integer [primary key]
+  idCost integer
+  deposit double
+  metodo char
+  tarjeta varchar
+  
+}
+
+Ref: parking.idprices > prices.id
+
+Ref: user.idCategories > userCategories.id
+Ref: user.idSupervisor > user.id
+
+Ref: ticket.idLTP <> longTermParking.id
+Ref: ticket.idParking > parking.id
+
+Ref: longTermParking.idcustomer > customer.id
+Ref: longTermParking.idParking > parking.id
+
+Ref: customer.idCompany > company.id
+
+Ref: expenses.idParking > parking.id
+Ref: expenses.idUser >user.id
+
+
+Ref: crash.idTicket > ticket.id
+
+Ref: invoices.idCompany > company.id
+
+
+Ref: workingRelationship.idParking > parking.id
+Ref: workingRelationship.idUser > user.id
+
+Ref: cost.idTicket - ticket.id
+Ref: cost.id < payments.idCost
+
+
+

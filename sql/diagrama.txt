@@ -157,5 +157,122 @@ Ref: workingRelationship.idUser > user.id
 Ref: cost.idTicket - ticket.id
 Ref: cost.id < payments.idCost
 
+use parkingLot;
+#relaciones creadas por mi 
+ALTER TABLE ticket ADD CONSTRAINT fk_parking_d FOREIGN KEY (id_parking) REFERENCES parking(id);
+ALTER TABLE cost ADD CONSTRAINT fk_ticket FOREIGN KEY (id_ticket) REFERENCES ticket(id);
+ALTER TABLE payments  ADD CONSTRAINT fk_cost FOREIGN KEY (id_cost) REFERENCES cost(id);
+ALTER TABLE parking ADD CONSTRAINT fk_prices_parking FOREIGN KEY (id_prices) REFERENCES prices(id);
+ALTER TABLE crash ADD CONSTRAINT fk_crash FOREIGN KEY (id_ticket) REFERENCES ticket(id);
+ALTER TABLE expenses ADD CONSTRAINT fk_expenses_parking FOREIGN KEY (id_parking) REFERENCES parking(id);
+ALTER TABLE expenses ADD CONSTRAINT fk_expenses_user FOREIGN KEY (id_user) REFERENCES user(id);
+ALTER TABLE working_relationship ADD CONSTRAINT fk_working_user FOREIGN KEY (id_user) REFERENCES user(id);
+ALTER TABLE working_relationship ADD CONSTRAINT fk_parking FOREIGN KEY (id_parking) REFERENCES parking(id);
+ALTER TABLE user ADD CONSTRAINT fk_categories FOREIGN KEY (id_categories) REFERENCES user_categories(id);
+ALTER TABLE long_term_parking ADD CONSTRAINT fk_parking_f FOREIGN KEY (id_parking) REFERENCES parking(id);
+ALTER TABLE long_term_parking ADD CONSTRAINT fk_Customer FOREIGN KEY (id_customer) REFERENCES customer(id);
+ALTER TABLE customer ADD CONSTRAINT fk_company FOREIGN KEY (id_company) REFERENCES company(id);
+ALTER TABLE invoices ADD CONSTRAINT fk_invoices FOREIGN KEY (id_company) REFERENCES company(id);
+
+
+INSERT INTO parkingLot.parking
+(id, id_prices, soft_delete, spaces, unavailable, created_at, location, name)
+VALUES (1, 1, 0, 20, 1, NOW(), 'Av california', 'park Jesus');
+
+INSERT INTO parkingLot.prices
+(hourp, id, long_term, soft_delete)
+VALUES(35, 0, 180, 0);
+
+
+INSERT INTO parkingLot.ticket
+(active, id, id_parking, idltp, soft_delete, finish, `start`)
+VALUES(1, 0, 1, null, 0, null, now());
+
+
+
+SHOW CREATE TABLE parkingLot.ticket;
+
+
+
+show columns from workingRelationship;
+
+drop database parkingLot;
+
+select count(*) from parking as p 
+join ticket as t on p.id =t.id_parking 
+where t.idltp is null and t.active = true;
+
+SELECT (COUNT(*) - p.unavailable),p. AS available_spaces
+FROM parking AS p
+JOIN ticket AS t ON p.id = t.id_parking
+WHERE t.idltp IS NULL 
+  AND t.active = TRUE  
+  AND p.id = 1
+GROUP BY p.id;
+
+select count(*) from long_term_parking ltp 
+join parking as p on p.id = ltp.id_parking 
+where ltp.soft_delete =FALSE and p.id=1;
+
+SELECT 
+    (spaces-(available_spaces + long_term_count)) AS total_available_spaces
+FROM (
+    SELECT (COUNT(*) - p.unavailable) AS available_spaces,p.spaces AS spaces
+    FROM parking AS p
+    JOIN ticket AS t ON p.id = t.id_parking
+    WHERE t.idltp IS NULL 
+      AND t.active = TRUE  
+      AND p.id = 1
+    GROUP BY p.id
+) AS ticket_count
+CROSS JOIN (
+    SELECT COUNT(*) AS long_term_count
+    FROM long_term_parking ltp
+    JOIN parking AS p ON p.id = ltp.id_parking
+    WHERE ltp.soft_delete = FALSE and p.id=1
+) AS ltp_count;
+
+
+
+
+
+
+
+
+select * from ticket;
+select * from parking;
+
+
+
+
+
+
+
+
+
+
+show Columns from ticket;
+
+ALTER TABLE long_term_parking 
+DROP CONSTRAINT fk_parking;
+
+ALTER TABLE long_term_parking DROP FOREIGN KEY fk_parking;
+
+SELECT CONSTRAINT_NAME 
+FROM information_schema.KEY_COLUMN_USAGE 
+WHERE TABLE_NAME = 'ticket' 
+AND TABLE_SCHEMA = 'parkingLot';
+
+
+ALTER TABLE `ticket` MODIFY `idltp` INT NULL;
+
+
+
+
+
+
+
+
+
 
 

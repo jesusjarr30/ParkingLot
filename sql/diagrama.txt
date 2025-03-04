@@ -147,7 +147,6 @@ Ref: expenses.idUser >user.id
 
 
 Ref: crash.idTicket > ticket.id
-
 Ref: invoices.idCompany > company.id
 
 
@@ -156,6 +155,8 @@ Ref: workingRelationship.idUser > user.id
 
 Ref: cost.idTicket - ticket.id
 Ref: cost.id < payments.idCost
+
+
 
 use parkingLot;
 #relaciones creadas por mi 
@@ -175,13 +176,44 @@ ALTER TABLE customer ADD CONSTRAINT fk_company FOREIGN KEY (id_company) REFERENC
 ALTER TABLE invoices ADD CONSTRAINT fk_invoices FOREIGN KEY (id_company) REFERENCES company(id);
 
 
+
+///primero es necesesario agregar todos los tickets 
+
+INSERT INTO parkingLot.prices
+(hourp, id, long_term, soft_delete)
+VALUES(35, 1, 180, 0);
+
+INSERT INTO parkingLot.prices
+(hourp, id, long_term, soft_delete)
+VALUES(15, 2, 160, 0);
+
+INSERT INTO parkingLot.prices
+(hourp, id, long_term, soft_delete)
+VALUES(16, 3, 165, 0);
+
+INSERT INTO parkingLot.prices
+(hourp, id, long_term, soft_delete)
+VALUES(18, 4, 150, 0);
+
+INSERT INTO parkingLot.prices
+(hourp, id, long_term, soft_delete)
+VALUES(12, 5, 170, 0);
+
+INSERT INTO parkingLot.prices
+(hourp, id, long_term, soft_delete)
+VALUES(19, 6, 150, 0);
+
+
+
+//agregar los parking lots
+
+
+
+
 INSERT INTO parkingLot.parking
 (id, id_prices, soft_delete, spaces, unavailable, created_at, location, name)
 VALUES (1, 1, 0, 20, 1, NOW(), 'Av california', 'park Jesus');
 
-INSERT INTO parkingLot.prices
-(hourp, id, long_term, soft_delete)
-VALUES(35, 0, 180, 0);
 
 
 INSERT INTO parkingLot.ticket
@@ -190,9 +222,10 @@ VALUES(1, 0, 1, null, 0, null, now());
 
 
 
+
+
+
 SHOW CREATE TABLE parkingLot.ticket;
-
-
 
 show columns from workingRelationship;
 
@@ -214,6 +247,9 @@ select count(*) from long_term_parking ltp
 join parking as p on p.id = ltp.id_parking 
 where ltp.soft_delete =FALSE and p.id=1;
 
+#Obtener todos los espacios disponibles de un estacionamiento libres.
+
+
 SELECT 
     (spaces-(available_spaces + long_term_count)) AS total_available_spaces
 FROM (
@@ -232,29 +268,6 @@ CROSS JOIN (
     WHERE ltp.soft_delete = FALSE and p.id=1
 ) AS ltp_count;
 
-
-
-
-
-
-
-
-select * from ticket;
-select * from parking;
-
-
-
-
-
-
-
-
-
-
-show Columns from ticket;
-
-ALTER TABLE long_term_parking 
-DROP CONSTRAINT fk_parking;
 
 ALTER TABLE long_term_parking DROP FOREIGN KEY fk_parking;
 
